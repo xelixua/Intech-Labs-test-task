@@ -1,0 +1,12 @@
+package xyz.maksimenko.javaeett;
+
+import java.io.Serializable;
+
+public class AuthenticationBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5443351151396868724L;
+
+}

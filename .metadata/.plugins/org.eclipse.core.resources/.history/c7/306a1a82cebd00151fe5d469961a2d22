@@ -1,0 +1,15 @@
+package xyz.maksimenko.DAO;
+
+import java.sql.SQLException;
+import java.util.Collection;
+
+import xyz.maksimenko.javaeett.Token;
+
+public interface TokenDAO {
+
+	public void addToken(Token token) throws SQLException;
+	public void updateToken(Token token) throws SQLException;
+	public void deleteToken(Token token) throws SQLException;
+	public Token getTokenById(Long tokenId) throws SQLException;
+	public Collec€tion getTokensForUser(String username) throws SQLException;
+}

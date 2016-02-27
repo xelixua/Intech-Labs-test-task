@@ -1,0 +1,73 @@
+package xyz.maksimenko.javaeett;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.UUID;
+
+import javax.faces.bean.ApplicationScoped;
+import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import javax.json.spi.JsonProvider;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
+
+@ApplicationScoped
+@ServerEndpoint("/wscommands")
+public class WebSocketServer {
+
+	@Inject
+	private WSSessionHandler sessionHandler;
+	
+	@OnOpen
+	public void open(Session session){
+		System.out.println("User connected " + session.getRequestURI() + " " + session.getId());
+	}
+	
+	@OnMessage
+	public void handleMessage(String message, Session session){
+		try (JsonReader reader = Json.createReader(new StringReader(message))){
+			System.out.println(message);
+			JsonObject jsonMessage = reader.readObject();
+			
+			String type = jsonMessage.getString("action");
+			switch(type) {
+			case "LOGIN_CUSTOMER":
+				System.out.println("login ws received");
+				String sequenceId = jsonMessage.getString("sequence_id");
+				JsonObject requestData = jsonMessage.getJsonObject("data");
+				String email = requestData.getString("email");
+				String password = requestData.getString("password");
+				JsonObject responseData = sessionHandler.loginRequest(email, password);
+				JsonProvider provider = JsonProvider.provider();
+				JsonObjectBuilder jsonObjectBuilder = provider.createObjectBuilder();
+				String responseType;
+				if(responseData.containsKey("error_code")){ //failed login
+					responseType = "CUSTOMER_ERROR";
+				} else { //successful login
+					responseType = "CUSTOMER_API_TOKEN";
+					sequenceId = UUID.randomUUID().toString();
+				}
+				jsonObjectBuilder.add("type", responseType)
+								.add("sequence_id", sequenceId)
+								.add("data", responseData);
+				JsonObject response = jsonObjectBuilder.build();
+				try {
+					session.getBasicRemote().sendText(response.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			default:
+				break;
+			}
+		} catch (NullPointerException e) {
+			//TODO handle user requests with old session
+		}
+	}
+}

@@ -1,0 +1,32 @@
+package xyz.maksimenko.DAO.Impl;
+
+import java.sql.SQLException;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+import xyz.maksimenko.DAO.UserDAO;
+import xyz.maksimenko.javaeett.User;
+import xyz.maksimenko.util.HibernateUtil;
+
+public class UserDAOImpl implements UserDAO{
+	public User getUserByUsername(String username) throws SQLException {
+		Session session = null;
+		User user = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			session.beginTransaction();
+			Query query = session.createQuery("from User where username = :username").setString("username", username);
+			user = (User) query.uniqueResult();
+			session.getTransaction().commit();
+		} catch (Exception e){
+			System.out.println("Cannot get user by username " + e);
+		} finally {
+			if(session != null && session.isOpen()){
+				session.close();
+			}
+		}
+		return user;
+	}
+
+}

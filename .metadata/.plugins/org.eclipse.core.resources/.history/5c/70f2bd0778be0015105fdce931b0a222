@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+	  <h:head>
+	  <script src="http://www.myersdaily.org/joseph/javascript/md5.js"></script>
+	  <h:outputScript library="js" name="client.js" />
+	  <title>Authentication test</title>
+	  </h:head>
+	  <h:body ng-app="JavaEETTClient" ng-controller="WSController">
+	  	<div ng-controller="AuthController">
+			<h:form ng-show="unauth">
+				<h2>
+	                Hello. Please enter your username and password
+	            </h2>
+				<h:inputText id="username"
+	                            title="Enter your username"
+	                            ng-model="username">
+	                </h:inputText>
+				<h:inputText id="password"
+	                            title="Enter your password"
+	                            ng-model="password">
+	                </h:inputText>
+	                <h:commandButton id="submit" value="Login"
+	                                 ng-click="authRequest()"/>
+			</h:form>
+			<div class="alert alert-danger" ng-show="noEmail">You must enter your E-Mail</div>
+			<div class="alert alert-danger" ng-show="noPassword">You must enter your password</div>
+			<div class="alert alert-danger" ng-show="malformedEmail">Please enter E-Mail like user@domain.com</div>
+			<div class="alert alert-danger" ng-show="malformedPassword">Please enter alphanumberic password</div>
+			<div class="alert alert-danger" ng-show="wrongAuthData">Wrong E-Mail or password. Please check credentials and enter again</div>
+		</div>
+		</h:body>
+	</html>

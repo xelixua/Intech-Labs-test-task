@@ -1,0 +1,82 @@
+package xyz.maksimenko.feedsreader;
+
+import javax.websocket.server.ServerEndpoint;
+
+import org.jboss.logging.Logger;
+
+import xyz.maksimenko.feedsreader.feedobject.Feed;
+import xyz.maksimenko.util.DAOfactory;
+
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.OnMessage;
+import javax.websocket.OnError;
+
+import java.io.StringReader;
+import java.util.List;
+import java.util.logging.Level;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.websocket.OnClose;
+import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
+@ApplicationScoped
+@ServerEndpoint("/feeds")
+public class WebSocketServer {
+	
+	@Inject
+	private WSSessionHandler sessionHandler;
+	
+	@OnOpen
+	public void open(Session session){
+		System.out.println("User connected " + session.getRequestURI());
+		sessionHandler.addSession(session);
+	}
+	
+	@OnMessage
+	public void handleMessage(String message, Session session){
+		try (JsonReader reader = Json.createReader(new StringReader(message))){
+			JsonObject jsonMessage = reader.readObject();
+			
+			String action = jsonMessage.getString("action");
+			switch(action) {
+			case "login":
+				System.out.println("login ws received");
+				String login = jsonMessage.getString("login");
+				//TODO validate login input
+				sessionHandler.userLogged(session, login);
+				break;
+			case "feeds": //get feeds for category
+				System.out.println("feeds ws received");
+				String categoryName = jsonMessage.getString("category");
+				sessionHandler.feedsRequested(session, categoryName);
+				break;
+			case "items": //get items for feed
+				System.out.println("items ws received");
+				String feedName = jsonMessage.getString("feed");
+				sessionHandler.itemsRequested(session, feedName);
+				break;
+			case "all_items": //get items for all feeds
+				System.out.println("all items ws received");
+				sessionHandler.allItemsRequested(session);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	@OnClose
+	public void close(Session session){
+		sessionHandler.removeSession(session);
+	}
+	
+	@OnError
+	public void onError(Throwable error){
+		//Logger.getLogger(DeviceWebSocketServer.class.getName()).log(Level.SEVERE, null, error);
+	}
+	
+}

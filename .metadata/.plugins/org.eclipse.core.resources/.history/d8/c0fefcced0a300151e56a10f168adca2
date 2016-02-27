@@ -1,0 +1,31 @@
+/**
+ * Singleton bean for various background tasks
+ */
+package xyz.maksimenko.feedsreader;
+
+import java.sql.SQLException;
+import java.util.Calendar;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+
+import xyz.maksimenko.util.DAOfactory;
+
+@Startup
+@Singleton
+public class BackgroundBean {
+	@EJB
+	private FeedProcessor feedP;
+
+	/**
+	 * Updates all feeds at startup 
+	 */
+	@PostConstruct
+	public void init(){
+		System.setProperty("http.agent", "");
+		feedP.updateFeeds();
+	}	
+}

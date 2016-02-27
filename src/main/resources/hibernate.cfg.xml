@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+      "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+      "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd" >
+<hibernate-configuration>
+	<session-factory>
+		<mapping class="xyz.maksimenko.javaeett.AddressBookItem" />
+		<mapping class="xyz.maksimenko.javaeett.Message" />
+		<mapping class="xyz.maksimenko.javaeett.User" />
+		<mapping class="xyz.maksimenko.javaeett.UserRole" />
+	</session-factory>
+</hibernate-configuration>

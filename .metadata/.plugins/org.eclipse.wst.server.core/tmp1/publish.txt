@@ -1,0 +1,4 @@
+#Tomcat publish data
+#Mon Dec 21 16:16:04 EAT 2015
+org.eclipse.jst.jee.server\:/binary\:C\:\\Users\\smaksimenko\\.m2\\repository\\org\\springframework\\spring-web\\4.1.4.RELEASE\\spring-web-4.1.4.RELEASE.jar=D\:\\apache-tomcat-8.0.28\\wtpwebapps\\ITNavigator-test-task\\WEB-INF\\lib\\spring-web-4.1.4.RELEASE.jar
+org.eclipse.jst.jee.server\:ITNavigator-test-task=D\:\\apache-tomcat-8.0.28\\wtpwebapps\\ITNavigator-test-task

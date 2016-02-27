@@ -1,0 +1,46 @@
+package xyz.maksimenko.javaeett;
+
+import java.util.UUID;
+
+import xyz.maksimenko.util.DAOFactory;
+
+public class Token {
+	private Long tokenId;
+	private String value;
+	private Byte age;
+	private Long userId;
+	
+	public Token(){
+		value = UUID.randomUUID().toString();
+		age = 0;
+	}
+	
+	private void modifyPreviousTokens(){
+		DAOFactory.getInstance().getTokenDAO().get
+	}
+	
+	public Long getTokenId() {
+		return tokenId;
+	}
+	public void setTokenId(Long tokenId) {
+		this.tokenId = tokenId;
+	}
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
+	}
+	public Byte getAge() {
+		return age;
+	}
+	public void setAge(Byte age) {
+		this.age = age;
+	}
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+}

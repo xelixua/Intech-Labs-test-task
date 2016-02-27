@@ -1,0 +1,12 @@
+package xyz.maksimenko.javaeett;
+
+import javax.json.JsonObject;
+
+public class WSSessionHandler {
+
+	public JsonObject loginRequest(String email, String password) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

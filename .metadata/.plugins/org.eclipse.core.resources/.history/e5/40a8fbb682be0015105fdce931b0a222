@@ -1,0 +1,124 @@
+package xyz.maksimenko.javaeett;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
+public class Token {
+	private Long tokenId;
+	private String value;
+	private Byte age = 0;
+	private Long expires;
+	private LocalDateTime expiresObject;
+	private Long userId;
+	
+	public Token(){
+		value = UUID.randomUUID().toString();
+		expiresObject = LocalDateTime.now();
+		expiresObject = expiresObject.withDayOfYear(expiresObject.getDayOfYear() + 7);
+		expires = expiresObject.atZone(ZoneId.of("GMT+3")).toInstant().toEpochMilli();
+	}
+	
+	public Long getTokenId() {
+		return tokenId;
+	}
+	public void setTokenId(Long tokenId) {
+		this.tokenId = tokenId;
+	}
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
+	}
+	public Byte getAge() {
+		return age;
+	}
+	public void setAge(Byte age) {
+		this.age = age;
+	}
+	
+	public Token makeOlder() {
+		age++;
+		return this;
+	}
+	
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getExpires() {
+		return expires;
+	}
+	
+	public String getHumanReadableExpires(){
+		return expiresObject.format(DateTimeFormatter.ISO_INSTANT);
+	}
+
+	public void setExpires(Long expires) {
+		this.expires = expires;
+		expiresObject = LocalDateTime.ofInstant(Instant.ofEpochMilli(expires), ZoneId.of("GMT+3"));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((age == null) ? 0 : age.hashCode());
+		result = prime * result + ((expires == null) ? 0 : expires.hashCode());
+		result = prime * result + ((expiresObject == null) ? 0 : expiresObject.hashCode());
+		result = prime * result + ((tokenId == null) ? 0 : tokenId.hashCode());
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Token other = (Token) obj;
+		if (age == null) {
+			if (other.age != null)
+				return false;
+		} else if (!age.equals(other.age))
+			return false;
+		if (expires == null) {
+			if (other.expires != null)
+				return false;
+		} else if (!expires.equals(other.expires))
+			return false;
+		if (expiresObject == null) {
+			if (other.expiresObject != null)
+				return false;
+		} else if (!expiresObject.equals(other.expiresObject))
+			return false;
+		if (tokenId == null) {
+			if (other.tokenId != null)
+				return false;
+		} else if (!tokenId.equals(other.tokenId))
+			return false;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+	
+	
+}

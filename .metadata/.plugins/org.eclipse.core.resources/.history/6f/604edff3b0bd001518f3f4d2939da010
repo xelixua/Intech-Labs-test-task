@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+<hibernate-mapping>
+	<class name="xyz.maksimenko.javaeett.User" table="tokens">
+		<id column="tokenId" name="tokenId" type="java.lang.Long">
+			<generator class="increment"/>
+		</id>
+		<property column="value" name="value" type="java.lang.String"/>
+		<property column="age" name="passwordHash" type="java.lang.Byte"/>
+		<set name="tokens" table="tokens" lazy="false" cascade="all">
+			<key column="userId"/>
+			<one-to-many class="xyz.maksimenko.javaeett.Token"/>
+		</set>
+	</class>
+</hibernate-mapping>

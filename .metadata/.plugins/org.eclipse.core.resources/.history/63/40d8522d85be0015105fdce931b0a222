@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+	  <h:head>
+	  <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+	  <title>Authentication test</title>
+	  <script src="http://www.myersdaily.org/joseph/javascript/md5.js"></script>
+	  <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	  </h:head>
+	  <h:outputScript library="js" name="client.js" />
+	  <h:body ng-app="JavaEETTClient" ng-controller="WSController">
+	  	<div ng-controller="AuthController" class="row">
+			<div ng-show="unauth" class="container">
+				<div class="col-md-3">
+				<h2>
+	                Hello. Please enter your username and password
+	            </h2>
+				<h:inputText id="username" class="form-control"
+	                            title="Enter your username"
+	                            placeholder = "Your E-Mail"
+	                            ng-model="username">
+	                </h:inputText>
+	                <br/>
+				<h:inputSecret id="password" class="form-control"
+	                            title="Enter your password"
+	                            placeholder = "Your password"
+	                            ng-model="password">
+	                </h:inputSecret>
+	                <br/>
+	                <h:commandButton id="submit" value="Login" class="btn btn-default"
+	                                 ng-click="authRequest()"/>
+	        	</div>
+			</div>
+			<div class="alert alert-danger col-md-4" ng-show="noEmail">You must enter your E-Mail</div>
+			<div class="alert alert-danger col-md-4" ng-show="noPassword">You must enter your password</div>
+			<div class="alert alert-danger col-md-4" ng-show="malformedEmail">Please enter E-Mail like user@domain.com</div>
+			<div class="alert alert-danger col-md-4" ng-show="malformedPassword">Please enter alphanumberic password</div>
+			<div class="alert alert-danger col-md-4" ng-show="wrongAuthData">Wrong E-Mail or password. Please check credentials and enter again</div>
+		</div>
+		</h:body>
+	</html>

@@ -1,0 +1,67 @@
+package xyz.maksimenko.javaeett;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
+public class Token {
+	private Long tokenId;
+	private String value;
+	private Byte age = 0;
+	private Long expires;
+	private LocalDateTime expiresObject;
+	private Long userId;
+	
+	public Token(){
+		value = UUID.randomUUID().toString();
+		expiresObject = LocalDateTime.now();
+		expiresObject = expiresObject.withDayOfYear(expiresObject.getDayOfYear() + 7);
+		expires = expiresObject.atZone(ZoneId.of("GMT+3")).toInstant().toEpochMilli();
+	}
+	
+	public Long getTokenId() {
+		return tokenId;
+	}
+	public void setTokenId(Long tokenId) {
+		this.tokenId = tokenId;
+	}
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
+	}
+	public Byte getAge() {
+		return age;
+	}
+	public void setAge(Byte age) {
+		this.age = age;
+	}
+	
+	public Token makeOlder() {
+		age++;
+		return this;
+	}
+	
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getExpires() {
+		return expires;
+	}
+	
+	public String getHumanReadableExpires(){
+		return expiresObject.format(DateTimeFormatter.ISO_INSTANT);
+	}
+
+	public void setExpires(Long expires) {
+		this.expires = expires;
+	}
+	
+	
+}

@@ -1,0 +1,100 @@
+package xyz.maksimenko.test;
+
+import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+import xyz.maksimenko.DAO.TokenDAO;
+import xyz.maksimenko.javaeett.Token;
+import xyz.maksimenko.javaeett.User;
+import xyz.maksimenko.util.DAOFactory;
+
+public class HibernateTest {
+	private final String TEST_LOGIN_DUMMY = "dummy@domain.ru";
+	private final String TEST_LOGIN = "123@gmail.com";
+	private final String TEST_PASSWORD_HASH = "14a88b9d2f52c55b5fbcf9c5d9c11875";
+	private final long TEST_USER_ID = 0L;
+	
+	private void clean() {
+		
+		User testUser = new User();
+		List<Token> oldTokens;
+		testUser.setUserId(TEST_USER_ID);
+		try {
+			if((oldTokens = (List<Token>) DAOFactory.getInstance().getTokenDAO().getTokensForUser(testUser)) != null) {
+				oldTokens.forEach(oldToken -> {
+					try { 
+						DAOFactory.getInstance().getTokenDAO().deleteToken(oldToken); 
+					} catch (SQLException e) {
+						e.printStackTrace(); 
+					}
+				});
+			}
+		} catch (SQLException e) {
+			
+		}
+	}
+	
+	@Test 
+	public void getUser(){
+		try {
+			User user = DAOFactory.getInstance().getUserDAO().getUserByUsername(TEST_LOGIN);
+			assertTrue(user.getPasswordHash().equals(TEST_PASSWORD_HASH));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void addToken(){
+		clean();
+		User testUser = new User();
+		testUser.setUserId(TEST_USER_ID);
+		testUser.setUsername(TEST_LOGIN_DUMMY);
+		testUser.setPasswordHash(TEST_PASSWORD_HASH);
+		Token token = new Token();
+		TokenDAO dao = DAOFactory.getInstance().getTokenDAO();
+		token.setUserId(TEST_USER_ID);
+		try {
+			dao.addToken(token);
+			Token token2 = ((List<Token>) dao.getTokensForUser(testUser)).get(0);
+			dao.deleteToken(token2);
+			assertTrue(token.equals(token2));
+		} catch (SQLException e){
+			e.printStackTrace();
+		}		
+	}
+	
+	@Test
+	public void updateTokens(){
+		clean();
+		User testUser = new User();
+		testUser.setUserId(TEST_USER_ID);
+		testUser.setUsername(TEST_LOGIN_DUMMY);
+		testUser.setPasswordHash(TEST_PASSWORD_HASH);
+		Token token = new Token();
+		TokenDAO dao = DAOFactory.getInstance().getTokenDAO();
+		token.setUserId(TEST_USER_ID);
+		try {
+			dao.addToken(token);
+			
+			token.makeOlder();
+			//get writed to db
+			Token token2 = ((List<Token>) dao.getTokensForUser(testUser)).get(0);
+			token2.makeOlder();
+			List<Token> newTokens = new ArrayList<Token>();
+			newTokens.add(token2);
+			dao.updateTokens(newTokens);
+			token2 = ((List<Token>) dao.getTokensForUser(testUser)).get(0);
+			dao.deleteToken(token2);
+			assertTrue(token.equals(token2));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+}

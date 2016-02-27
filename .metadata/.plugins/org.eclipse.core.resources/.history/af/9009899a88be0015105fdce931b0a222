@@ -1,0 +1,9 @@
+package xyz.maksimenko.javaeett;
+
+import javax.ejb.Stateless;
+
+@Stateless
+public class AuthenticationBean {
+	private void 
+
+}

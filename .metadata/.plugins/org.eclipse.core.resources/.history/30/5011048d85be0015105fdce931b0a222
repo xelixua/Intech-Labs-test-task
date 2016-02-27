@@ -1,0 +1,104 @@
+/**
+ * 
+ */
+
+(function(){
+	var app = angular.module("JavaEETTClient", ["angularfaces"]);
+	
+	app.controller("WSController", ['$scope', '$rootScope', function(scope, rootScope) {
+		var webs = new WebSocket("ws://10.160.2.31:8080/javaeett/wscommands"),
+			generateUUID = function () {
+				var s4 = function() {
+					return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+				}; 
+				return s4() + s4() + '-' + s4() + '-' + s4() +'-' + s4() + '-' + s4() + s4() + s4() + s4();
+			},
+			onMessage = function (event) {
+				var message = JSON.parse(event.data);
+				console.log("Received message " + message.type);
+				switch(message.type){
+				case "CUSTOMER_API_TOKEN":
+					rootScope.$broadcast("authenticated", {token: message.data.api_token, expirationDate: message.data.api_token_expiration_date});
+					break;
+				case "CUSTOMER_ERROR":
+					rootScope.$broadcast("wrongAuthData");
+					break;
+				default:
+					break;
+				}
+			};
+		
+		webs.onmessage = onMessage;
+		scope.$on("authRequest", function(event, args) {
+			var message = {
+				type: "LOGIN_CUSTOMER",
+				sequence_id: generateUUID(),
+				data: {
+					email: args.username,
+					password: md5(args.password)
+				}
+			};
+			
+			webs.send(JSON.stringify(message));
+		});
+	}]);
+	
+	app.controller("AuthController", ['$scope', '$rootScope', function(scope, rootScope) {
+		var DEFAULT_USERNAME = "",
+			DEFAULT_PASSWORD = "",
+			username = DEFAULT_USERNAME,
+			password = DEFAULT_PASSWORD,
+			unauth = true,
+			noEmail = false,
+			noPassword = false,
+			malformedEmail = false,
+			malformedPassword = false,
+			wrongAuthData = false,
+			validate = function(username, password) {
+				var usernameTempl = /^\w+@[a-zA-Z]+?\.[a-zA-Z]{2,3}$/,
+					passwordTempl = /^[a-zA-Z0-9]+$/;
+				
+				noEmail = username === DEFAULT_USERNAME;
+				noPassword = password === DEFAULT_PASSWORD;
+				malformedEmail = !usernameTempl.test(username);
+				malformedPassword = !passwordTempl.test(password);
+				
+				return (!(noEmail || noPassword || malformedEmail || malformedPassword));
+				
+			};
+			scope.hideDef = function () {
+				
+			};
+			scope.authRequest = function () {
+				if(validate(scope.username, scope.password)){
+					rootScope.$broadcast("authRequest", {username: scope.username, password: scope.password});
+				} else {
+					setInterval(function () { //hide all error messages after 10 seconds
+						noEmail = false;
+						noPassword = false;
+						malformedEmail = false;
+						malformedPassword = false;
+					}, 10000);
+				}
+			};
+			
+			scope.$on("authenticated", function (event, args) {
+				alert("Got token " + args.token  + " Expires on " + args.expirationDate);
+			});
+			
+			scope.$on("wrongAuthData", function (event, args) {
+				scope.wrongAuthData = true;
+				setInterval(function () { //hide all error messages after 10 seconds
+					wrongAuthData = false;
+				}, 10000);
+			});
+			scope.username = username;
+			scope.password = password;
+			scope.unauth = unauth;
+			scope.noEmail = noEmail;
+			scope.noPassword = noPassword;
+			scope.malformedEmail = malformedEmail;
+			scope.malformedPassword = malformedPassword;
+			scope.wrongAuthData = wrongAuthData;
+	}]);
+})();

@@ -1,0 +1,24 @@
+package xyz.maksimenko.javaeett;
+
+import xyz.maksimenko.javaeett.*;
+import java.sql.SQLException;
+import xyz.maksimenko.util.DAOFactory;
+import javax.json.JsonObject;
+
+public class WSSessionHandler {
+
+	public JsonObject loginRequest(String email, String password) {
+		try {
+			User user = DAOFactory.getInstance().getUserDAO().getUserByUsername(email);
+			if(user.getPasswordHash().equals(password)){
+				//provide token to user
+				Token token = new Token();
+			} else {
+				
+			}
+		} catch (SQLException e){
+			
+		}
+	}
+
+}

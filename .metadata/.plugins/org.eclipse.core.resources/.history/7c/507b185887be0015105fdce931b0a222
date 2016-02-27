@@ -1,0 +1,52 @@
+package xyz.maksimenko.javaeett;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.spi.JsonProvider;
+
+import xyz.maksimenko.DAO.TokenDAO;
+import xyz.maksimenko.util.DAOFactory;
+
+public class WSSessionHandler {
+
+	/**
+	 * Returns json with token or json with error description
+	 * @param email
+	 * @param password
+	 * @return data JsonObject
+	 */
+	public JsonObject loginRequest(String email, String password) {
+		JsonProvider provider = JsonProvider.provider();
+		JsonObjectBuilder responseDataBuilder = provider.createObjectBuilder();
+		try {
+			User user = DAOFactory.getInstance().getUserDAO().getUserByUsername(email);
+			System.out.println(user.getPasswordHash());
+			System.out.println(user);
+			if( user!= null && user.getPasswordHash().equals(password)){
+				//provide token to user
+				TokenDAO dao = DAOFactory.getInstance().getTokenDAO();
+				List<Token> tokens = (List<Token>) dao.getTokensForUser(user);
+				tokens = tokens.stream().map(token -> token.makeOlder()).collect(Collectors.toList());
+				dao.updateTokens(tokens);
+				Token token = new Token();
+				token.setUserId(user.getUserId());
+				dao.addToken(token);
+				responseDataBuilder.add("api_token", token.getValue());
+				responseDataBuilder.add("api_token_expiration_date", token.getHumanReadableExpires());
+			} else {
+				responseDataBuilder.add("error_description", "Customer not found");
+				responseDataBuilder.add("error_code", "customer.notFound");
+			}
+		} catch (SQLException e){
+			responseDataBuilder.add("error_description", "Customer not found");
+			responseDataBuilder.add("error_code", "customer.notFound");
+		}
+		
+		return responseDataBuilder.build();
+	}
+
+}

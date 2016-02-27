@@ -1,0 +1,5 @@
+package xyz.maksimenko.util;
+
+public class DAOFactory {
+
+}

@@ -1,0 +1,10 @@
+package xyz.maksimenko.DAO;
+
+import java.sql.SQLException;
+
+import xyz.maksimenko.javaeett.User;
+
+public interface UserDAO {
+	public void addUser(User user) throws SQLException;
+	public User getUserByUsername(String login) throws SQLException;
+}

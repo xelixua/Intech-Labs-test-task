@@ -1,0 +1,26 @@
+package xyz.maksimenko.javaeett.test;
+
+import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
+
+import org.junit.Test;
+
+import xyz.maksimenko.javaeett.User;
+import xyz.maksimenko.util.DAOFactory;
+
+public class HibernateTest {
+	private final String TEST_LOGIN = "123@gmail.com";
+	private final String TEST_PASSWORD_HASH = "14a88b9d2f52c55b5fbcf9c5d9c11875";
+	
+	@Test 
+	public void getUser(){
+		try {
+			User user = DAOFactory.getInstance().getUserDAO().getUserByUsername(TEST_LOGIN);
+			assertTrue(user.getPasswordHash().equals(TEST_PASSWORD_HASH));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+}
